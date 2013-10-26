@@ -1,5 +1,6 @@
 var test = require('tap').test,
-    traverse = require('..').traverse;
+    traverse = require('..').traverse,
+    createGraph = require('ngraph.graph');
 
 test('get all links', function(t) {
   var nodesCount = 5;
@@ -60,9 +61,48 @@ test('get all links to node', function(t) {
   t.end();
 });
 
+test('get filtered links from node', function(t) {
+  var graph = createGraph();
+  graph.addLink(0, 1, "Lu");
+  graph.addLink(1, 2, "Lu");
+  graph.addLink(0, 2, "Tako");
+
+  var visitedCount = 0;
+  traverse(graph)
+      .links()
+      .from(0)
+      .where(function(link) { return link.data === "Lu"; })
+      .each(function(link){
+        t.ok(link.data, "link should have associated data with it");
+        t.equal(link.data, "Lu");
+        visitedCount += 1;
+      });
+
+  t.equal(visitedCount, 1, "Only one link should be visited");
+  t.end();
+});
+
+test('get all links filtered', function(t) {
+  var graph = createGraph();
+  graph.addLink(0, 1, "Lu");
+  graph.addLink(1, 2, "Lu");
+  graph.addLink(0, 2, "Tako");
+
+  var visitedCount = 0;
+  traverse(graph)
+      .links()
+      .where(function(link) { return link.data === "Lu"; })
+      .each(function(link){
+        t.ok(link.data, "link should have associated data with it");
+        t.equal(link.data, "Lu");
+        visitedCount += 1;
+      });
+
+  t.equal(visitedCount, 2, "Two links should be visited");
+  t.end();
+});
 // todo: this should be part of ngraph.generators
 function createTestGraph(n) {
-  var createGraph = require('ngraph.graph');
   var g = createGraph();
   n = (typeof n === 'number' && n > 1) ? n : 2;
   for (i = 0; i < n; ++i) {
