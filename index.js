@@ -7,12 +7,14 @@ function traverse(graph) {
     links: function () {
       // todo: simplify, consider quicker version and bail outs
       var fromNodeId;
+      var toNodeId;
       var filters = {
         from: function (nodeId) {
           fromNodeId = nodeId;
           return filters;
         },
-        to: function (toNodeId) {
+        to: function (nodeId) {
+          toNodeId = nodeId;
           return filters;
         },
       };
@@ -28,6 +30,13 @@ function traverse(graph) {
           graph.forEachLinkedNode(fromNodeId, function(node, link) {
             links.push(link);
           }, true);
+        } else if (typeof toNodeId !== 'undefined') {
+          // use undirected traversal, and filter nodes here
+          graph.forEachLinkedNode(toNodeId, function(node, link) {
+            if (link.toId === toNodeId) {
+              links.push(link);
+            }
+          }, false);
         } else {
           graph.forEachLink(function(link) {
             links.push(link);
