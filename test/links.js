@@ -10,6 +10,7 @@ test('get all links', function(t) {
   var expectedLinksCount = graph.getLinksCount();
   var visitedCount = 0;
 
+  debugger;
   traverse(graph)
       .links()
       .forEach(function(link){
