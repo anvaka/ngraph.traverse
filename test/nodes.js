@@ -18,6 +18,31 @@ test('Visit all nodes', function (t) {
   t.end();
 });
 
+test('Visit only listed neighbors', function (t) {
+  var g = createBinTree(5);
+  // our tree is a bin tree of the following form:
+  //          1
+  //        2    3
+  //      4  5  6  7
+  //  ... five levels ...
+  // We are expecting to visit from node 1 and 2,
+  // thus:
+  var expectedNodes = [2, 3, 4, 5];
+
+  var visitedNodes = 0;
+  traverse(g)
+    .nodes()
+    .neighbors([1, 2])
+    .forEach(function (node) {
+      visitedNodes++;
+      var visitedCorrectNode = expectedNodes.indexOf(node.id) !== -1;
+      t.ok(visitedCorrectNode, 'Visited unexpected node: ' + node.id);
+    });
+
+  t.equal(visitedNodes, expectedNodes.length, 'Unexpected nodes were visited');
+  t.end();
+});
+
 test('Visit all neighbors', function (t) {
   var g = createBinTree(5);
 
