@@ -1,16 +1,18 @@
 var test = require('tap').test,
     traverse = require('..').traverse,
-    createGraph = require('ngraph.graph');
+    createGraph = require('ngraph.graph'),
+    // complete graph builder
+    createCompleteGraph = require('./graphbuilder');
 
 test('get all links', function(t) {
   var nodesCount = 5;
-  var graph = createTestGraph(nodesCount);
+  var graph = createCompleteGraph(nodesCount);
   var expectedLinksCount = graph.getLinksCount();
   var visitedCount = 0;
 
   traverse(graph)
       .links()
-      .each(function(link){
+      .forEach(function(link){
         t.ok(link, "link should be passed as an argument");
         visitedCount += 1;
       });
@@ -21,7 +23,7 @@ test('get all links', function(t) {
 
 test('get all links from node', function(t) {
   var nodesCount = 5;
-  var graph = createTestGraph(nodesCount);
+  var graph = createCompleteGraph(nodesCount);
   // it is a complete graph:
   var expectedLinksCount = nodesCount - 1;
   var visitedCount = 0;
@@ -30,7 +32,7 @@ test('get all links from node', function(t) {
   traverse(graph)
       .links()
       .from(startNodeId)
-      .each(function(link){
+      .forEach(function(link){
         t.ok(link, "link should be passed as an argument");
         t.equal(link.fromId, startNodeId, "from node id is not correct");
         visitedCount += 1;
@@ -42,7 +44,7 @@ test('get all links from node', function(t) {
 
 test('get all links to node', function(t) {
   var nodesCount = 5;
-  var graph = createTestGraph(nodesCount);
+  var graph = createCompleteGraph(nodesCount);
   // it is a complete graph:
   var expectedLinksCount = nodesCount - 1;
   var visitedCount = 0;
@@ -51,7 +53,7 @@ test('get all links to node', function(t) {
   traverse(graph)
       .links()
       .to(endNodeId)
-      .each(function(link){
+      .forEach(function(link){
         t.ok(link, "link should be passed as an argument");
         t.equal(link.toId, endNodeId, "end node id is not correct");
         visitedCount += 1;
@@ -72,7 +74,7 @@ test('get filtered links from node', function(t) {
       .links()
       .from(0)
       .where(function(link) { return link.data === "Lu"; })
-      .each(function(link){
+      .forEach(function(link){
         t.ok(link.data, "link should have associated data with it");
         t.equal(link.data, "Lu");
         visitedCount += 1;
@@ -91,8 +93,8 @@ test('get all links filtered', function(t) {
   var visitedCount = 0;
   traverse(graph)
       .links()
-      .where(function(link) { return link.data === "Lu"; })
-      .each(function(link){
+      .where(function (link) { return link.data === "Lu"; })
+      .forEach(function (link){
         t.ok(link.data, "link should have associated data with it");
         t.equal(link.data, "Lu");
         visitedCount += 1;
@@ -101,17 +103,31 @@ test('get all links filtered', function(t) {
   t.equal(visitedCount, 2, "Two links should be visited");
   t.end();
 });
-// todo: this should be part of ngraph.generators
-function createTestGraph(n) {
-  var g = createGraph();
-  n = (typeof n === 'number' && n > 1) ? n : 2;
-  for (i = 0; i < n; ++i) {
-    for (j = i + 1; j < n; ++j) {
-        if (i !== j) {
-            g.addLink(i, j);
-            g.addLink(j, i);
-        }
-    }
-  }
-  return g;
-}
+
+/*
+test('get all links to neighbors', function (t) {
+  var graph = createGraph();
+  // a small binary tree:
+  graph.addLink(0, 1);
+  graph.addLink(1, 2); graph.addLink(1, 3);
+  graph.addLink(2, 4);
+
+  t.test("visit first level from root", function (t) {
+    var startNodeId = 0;
+    var visitedCount = 0;
+
+    traverse(graph)
+      .links()
+      .from(startNodeId)
+      .to()
+      .forEach(function (link) {
+        visitedCount += 1;
+        t.ok(link, "Link should be present");
+      });
+    t.equal(visitedCount, 1, "Should visit four neighbors");
+    t.end();
+  });
+
+});
+
+*/
