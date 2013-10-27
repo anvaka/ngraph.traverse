@@ -1,5 +1,5 @@
 var test = require('tap').test,
-    traverse = require('..').traverse,
+    traverseNodes = require('..').nodes,
     createGraph = require('ngraph.graph'),
     createCompleteGraph = require('./graphbuilder');
 
@@ -7,8 +7,7 @@ test('Visit all nodes', function (t) {
   var g = createCompleteGraph(5);
 
   var visitedNodes = 0;
-  traverse(g)
-    .nodes()
+  traverseNodes(g)
     .forEach(function (node) {
       t.ok(node, "Node should be present");
       visitedNodes++;
@@ -30,8 +29,7 @@ test('Visit only listed neighbors', function (t) {
   var expectedNodes = [2, 3, 4, 5];
 
   var visitedNodes = 0;
-  traverse(g)
-    .nodes()
+  traverseNodes(g)
     .neighbors([1, 2])
     .forEach(function (node) {
       visitedNodes++;
@@ -48,8 +46,7 @@ test('Visit all neighbors', function (t) {
 
   var visitedNodes = 0;
   var startFrom = 1;
-  traverse(g)
-    .nodes()
+  traverseNodes(g)
     .neighbors(startFrom)
     .forEach(function (node) {
       t.notEqual(startFrom, node.id);
@@ -65,7 +62,7 @@ test('Visit all grandchildren', function (t) {
 
   var visitedNodes = 0;
   var startFrom = 1;
-  var nodes = traverse(g).nodes();
+  var nodes = traverseNodes(g);
   var children = nodes.neighbors(startFrom);
   var grandChildren = nodes.neighbors(children);
 

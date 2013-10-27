@@ -1,5 +1,6 @@
 var test = require('tap').test,
-    traverse = require('..').traverse,
+    traverse = require('..'),
+    traverseLinks = traverse.links,
     createGraph = require('ngraph.graph'),
     // complete graph builder
     createCompleteGraph = require('./graphbuilder');
@@ -10,12 +11,11 @@ test('get all links', function(t) {
   var expectedLinksCount = graph.getLinksCount();
   var visitedCount = 0;
 
-  traverse(graph)
-      .links()
-      .forEach(function(link){
-        t.ok(link, 'link should be passed as an argument');
-        visitedCount += 1;
-      });
+  traverseLinks(graph)
+    .forEach(function (link) {
+      t.ok(link, 'link should be passed as an argument');
+      visitedCount += 1;
+    });
 
   t.equal(visitedCount, expectedLinksCount, 'Number of edges is not correct');
   t.end();
@@ -29,14 +29,13 @@ test('get all links from node', function(t) {
   var visitedCount = 0;
 
   var startNodeId = 0;
-  traverse(graph)
-      .links()
-      .from(startNodeId)
-      .forEach(function(link){
-        t.ok(link, 'link should be passed as an argument');
-        t.equal(link.fromId, startNodeId, 'from node id is not correct');
-        visitedCount += 1;
-      });
+  traverseLinks(graph)
+    .from(startNodeId)
+    .forEach(function (link) {
+      t.ok(link, 'link should be passed as an argument');
+      t.equal(link.fromId, startNodeId, 'from node id is not correct');
+      visitedCount += 1;
+    });
 
   t.equal(visitedCount, expectedLinksCount, 'Number of edges is not correct');
   t.end();
@@ -50,14 +49,13 @@ test('get all links to node', function(t) {
   var visitedCount = 0;
 
   var endNodeId = 0;
-  traverse(graph)
-      .links()
-      .to(endNodeId)
-      .forEach(function(link){
-        t.ok(link, 'link should be passed as an argument');
-        t.equal(link.toId, endNodeId, 'end node id is not correct');
-        visitedCount += 1;
-      });
+  traverseLinks(graph)
+    .to(endNodeId)
+    .forEach(function(link){
+      t.ok(link, 'link should be passed as an argument');
+      t.equal(link.toId, endNodeId, 'end node id is not correct');
+      visitedCount += 1;
+    });
 
   t.equal(visitedCount, expectedLinksCount, 'Number of edges is not correct');
   t.end();
@@ -66,8 +64,7 @@ test('get all links to node', function(t) {
 test('get links form to', function(t) {
   var graph = createGraph();
   graph.addLink(0, 1); graph.addLink(1, 2);
-  traverse(graph)
-    .links()
+  traverseLinks(graph)
     .from(0)
     .to(2)
     .forEach(function(link) {
@@ -83,15 +80,14 @@ test('get filtered links from node', function(t) {
   graph.addLink(0, 2, 'Tako');
 
   var visitedCount = 0;
-  traverse(graph)
-      .links()
-      .from(0)
-      .where(function(link) { return link.data === 'Lu'; })
-      .forEach(function(link){
-        t.ok(link.data, 'link should have associated data with it');
-        t.equal(link.data, 'Lu');
-        visitedCount += 1;
-      });
+  traverseLinks(graph)
+    .from(0)
+    .where(function(link) { return link.data === 'Lu'; })
+    .forEach(function(link){
+      t.ok(link.data, 'link should have associated data with it');
+      t.equal(link.data, 'Lu');
+      visitedCount += 1;
+    });
 
   t.equal(visitedCount, 1, 'Only one link should be visited');
   t.end();
@@ -104,14 +100,13 @@ test('get all links filtered', function(t) {
   graph.addLink(0, 2, 'Tako');
 
   var visitedCount = 0;
-  traverse(graph)
-      .links()
-      .where(function (link) { return link.data === 'Lu'; })
-      .forEach(function (link){
-        t.ok(link.data, 'link should have associated data with it');
-        t.equal(link.data, 'Lu');
-        visitedCount += 1;
-      });
+  traverseLinks(graph)
+    .where(function (link) { return link.data === 'Lu'; })
+    .forEach(function (link){
+      t.ok(link.data, 'link should have associated data with it');
+      t.equal(link.data, 'Lu');
+      visitedCount += 1;
+    });
 
   t.equal(visitedCount, 2, 'Two links should be visited');
   t.end();
@@ -131,8 +126,7 @@ test('get all links to neighbors', function (t) {
     var startNodeId = 0;
     var visitedCount = 0;
 
-    traverse(graph)
-      .links()
+    traverseLinks(graph)
       .to([2, 3])
       .forEach(function (link) {
         visitedCount += 1;
@@ -146,8 +140,7 @@ test('get all links to neighbors', function (t) {
     var startNodeId = 0;
     var visitedCount = 0;
 
-    traverse(graph)
-      .links()
+    traverseLinks(graph)
       .from([0, 1])
       .to([2, 4, 1])
       .forEach(function (link) {
@@ -165,8 +158,7 @@ test('get all links to neighbors', function (t) {
     var startNodeId = 0;
     var visitedCount = 0;
 
-    traverse(graph)
-      .links()
+    traverseLinks(graph)
       .from([1, 2])
       .forEach(function (link) {
         visitedCount += 1;
@@ -181,8 +173,8 @@ test('get all links to neighbors', function (t) {
     //    0 -> 1
     //       2   3
     //     4
-    var nodes = traverse(graph).nodes();
-    var links = traverse(graph).links();
+    var nodes = traverse.nodes(graph);
+    var links = traverse.links(graph);
     var children = nodes.neighbors(1);
     var grandChildren = nodes.neighbors(children);
     var totalVisited = 0;

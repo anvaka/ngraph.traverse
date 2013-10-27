@@ -1,12 +1,6 @@
 "use strict";
 
 module.exports = {
-  traverse: traverse
+  links: require('./lib/links'),
+  nodes: require('./lib/nodes')
 };
-
-function traverse(graph) {
-  return {
-    links: require('./lib/links')(graph),
-    nodes: require('./lib/nodes')(graph)
-  };
-}
