@@ -142,6 +142,25 @@ test('get all links to neighbors', function (t) {
     t.end();
   });
 
+  t.test('visit custom set of from and to', function(t) {
+    var startNodeId = 0;
+    var visitedCount = 0;
+
+    traverse(graph)
+      .links()
+      .from([0, 1])
+      .to([2, 4, 1])
+      .forEach(function (link) {
+        visitedCount += 1;
+        var fromIsGood = link.fromId === 0 || link.formId === 1;
+        var toIsGood = link.toId === 2 || link.toId === 4 || link.toId === 1;
+        t.ok(fromIsGood || toIsGood, 'Link has unexpected start or end');
+      });
+    // with our configuration only two links are reachable:
+    t.equal(visitedCount, 2, 'Unexpected number of links visited');
+    t.end();
+  })
+
   t.test('visit custom set of from nodes', function (t) {
     var startNodeId = 0;
     var visitedCount = 0;
@@ -154,6 +173,31 @@ test('get all links to neighbors', function (t) {
         t.ok(link.fromId === 1 || link.fromId === 2, 'Link should go to either 2 or 3');
       });
     t.equal(visitedCount, 3, 'Unexpected number of links visited');
+    t.end();
+  });
+
+  t.test('visit grandchildren', function(t) {
+    // graph reminder:
+    //    0 -> 1
+    //       2   3
+    //     4
+    var nodes = traverse(graph).nodes();
+    var links = traverse(graph).links();
+    var children = nodes.neighbors(1);
+    var grandChildren = nodes.neighbors(children);
+    var totalVisited = 0;
+    links.from(1).to(children)
+      .forEach(function(link) {
+        t.ok(link.toId === 2 || link.toId === 3, 'Unexpected link visited');
+        totalVisited++;
+      });
+
+    links.from(children).to(grandChildren)
+      .forEach(function(link) {
+        t.ok(link.toId === 4, 'Unexpected link visited');
+        totalVisited++;
+      });
+    t.equal(totalVisited, 3, 'Only three nodes should be visited in this test')
     t.end();
   });
   t.end();
