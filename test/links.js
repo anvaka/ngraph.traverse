@@ -99,16 +99,32 @@ test('get all links filtered', function(t) {
   graph.addLink(1, 2, 'Lu');
   graph.addLink(0, 2, 'Tako');
 
-  var visitedCount = 0;
-  traverseLinks(graph)
-    .where(function (link) { return link.data === 'Lu'; })
-    .forEach(function (link){
-      t.ok(link.data, 'link should have associated data with it');
-      t.equal(link.data, 'Lu');
-      visitedCount += 1;
-    });
+  t.test('simple predicate', function(t) {
+    var visitedCount = 0;
+    traverseLinks(graph)
+      .where('Lu')
+      .forEach(function (link){
+        t.ok(link.data, 'link should have associated data with it');
+        t.equal(link.data, 'Lu');
+        visitedCount += 1;
+      });
 
-  t.equal(visitedCount, 2, 'Two links should be visited');
+    t.equal(visitedCount, 2, 'Two links should be visited');
+    t.end();
+  });
+  t.test('custom where predicate', function(t) {
+    var visitedCount = 0;
+    traverseLinks(graph)
+      .where(function (link) { return link.data === 'Lu'; })
+      .forEach(function (link){
+        t.ok(link.data, 'link should have associated data with it');
+        t.equal(link.data, 'Lu');
+        visitedCount += 1;
+      });
+
+    t.equal(visitedCount, 2, 'Two links should be visited');
+    t.end();
+  });
   t.end();
 });
 
