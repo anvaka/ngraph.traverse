@@ -63,6 +63,19 @@ test('get all links to node', function(t) {
   t.end();
 });
 
+test('get links form to', function(t) {
+  var graph = createGraph();
+  graph.addLink(0, 1); graph.addLink(1, 2);
+  traverse(graph)
+    .links()
+    .from(0)
+    .to(2)
+    .forEach(function(link) {
+      t.fail('Graph does not have such link');
+    })
+  t.end();
+});
+
 test('get filtered links from node', function(t) {
   var graph = createGraph();
   graph.addLink(0, 1, 'Lu');
