@@ -58,7 +58,7 @@ traverseLinks(graph)
   .where('Lu') 
   .forEach(function (link) { /* link is here */ });
   
-// This is equivelent to:
+// This is equivalent to:
 traverseLinks(graph)
   .where(function (link) { return link.data === 'Lu'; } ) 
   .forEach(function (link) { /* link is here */ });
