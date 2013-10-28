@@ -3,6 +3,7 @@ ngraph.traverse
 
 I'm trying to come up with easy way to traverse graphs, this is all very experimental.
 
+[![build status](https://secure.travis-ci.org/anvaka/ngraph.traverse.png)](http://travis-ci.org/anvaka/ngraph.traverse)
 Usage
 =====
 
